@@ -1,3 +1,4 @@
+from tkinter.messagebox import QUESTION
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
@@ -7,11 +8,13 @@ from .models import Choice, Question
 
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
-    context_object_name = 'latest_question_list'
+    #context_object_name = 'latest_question_list'
+    #queryset = Question.objects.order_by('pub_date')[:5]
 
     def get_queryset(self):
         """Return the last five published quetions."""
-        return Question.objects.order_by('-pub_date')[:5]
+        return Question.objects.prefetch_related('choice_set').order_by('pub_date')[:5]
+        #return Question.objects.order_by('pub_date')[:5]
 
 class DetailView(generic.DetailView):
     model = Question
